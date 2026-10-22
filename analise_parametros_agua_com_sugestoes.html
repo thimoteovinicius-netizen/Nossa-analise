@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#123b5d">
+<title>Análise de Água | Processamento de Dispositivos Médicos</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/5.1.1/tesseract.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+<style>
+:root{--navy:#123b5d;--blue:#176b9b;--cyan:#35a6c9;--pale:#eaf5fa;--bg:#f3f6f9;--ink:#233746;--muted:#647784;--line:#d9e3e9;--green:#16794b;--red:#b42332;--amber:#916000;--white:#fff}
+*{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#e7f2f8,#f5f7f9 55%,#e5edf2);font-family:Arial,Helvetica,sans-serif;color:var(--ink);padding:22px 14px}
+.app{max-width:1100px;margin:auto}.hero{background:linear-gradient(120deg,var(--navy),var(--blue));color:white;border-radius:18px;padding:28px;box-shadow:0 12px 28px #173c5724}
+.eyebrow{font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;opacity:.85;font-weight:700}.hero h1{margin:10px 0;font-size:clamp(1.45rem,4vw,2.2rem)}.hero p{margin:0;line-height:1.5;max-width:800px;color:#e4f3fb}
+.panel{background:var(--white);border:1px solid #e2eaf0;border-radius:16px;padding:22px;margin-top:18px;box-shadow:0 7px 22px #163e5810}.section-title{margin:0 0 16px;color:var(--navy);font-size:1.15rem;display:flex;gap:10px;align-items:center}.badge{display:inline-grid;place-items:center;width:29px;height:29px;border-radius:9px;background:var(--pale);color:var(--blue);font-weight:800}
+label{font-size:.9rem;font-weight:700;display:block;margin:0 0 7px;color:#344d5d}input,select,textarea{width:100%;border:1px solid #cbd8e0;border-radius:9px;padding:12px 13px;font:inherit;background:#fbfdfe;color:var(--ink)}input:focus,select:focus,textarea:focus{outline:3px solid #35a6c929;border-color:var(--cyan)}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.field{min-width:0}.hint{font-size:.82rem;color:var(--muted);line-height:1.45;margin:7px 0 0}.radio-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.radio-card{position:relative}.radio-card input{position:absolute;opacity:0;width:1px;height:1px}.radio-card label{border:2px solid var(--line);border-radius:12px;padding:16px;cursor:pointer;margin:0;height:100%;transition:.15s}.radio-card input:checked+label{border-color:var(--blue);background:var(--pale);color:var(--navy)}.radio-card strong{display:block;margin-bottom:6px}.radio-card span{font-weight:400;font-size:.83rem;line-height:1.4;display:block}.drop{border:2px dashed #9dbbcb;border-radius:13px;background:#f7fbfd;padding:24px;text-align:center}.drop input{max-width:100%;background:white}.drop strong{display:block;color:var(--navy);margin-bottom:8px}.btn{border:0;border-radius:10px;padding:13px 17px;font:inherit;font-weight:700;cursor:pointer;transition:.15s}.btn:disabled{opacity:.5;cursor:not-allowed}.btn-primary{background:linear-gradient(120deg,var(--blue),var(--cyan));color:white}.btn-secondary{background:#eaf2f6;color:var(--navy)}.btn-danger{background:#fff0f1;color:var(--red)}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.progress{height:8px;background:#e5edf1;border-radius:99px;overflow:hidden;margin-top:14px;display:none}.progress>div{height:100%;width:0;background:var(--cyan);transition:width .2s}.status{margin-top:12px;padding:12px 14px;border-radius:9px;background:#f1f6f9;color:#355265;line-height:1.5;white-space:pre-wrap}.status.error{background:#fff0f1;color:#92212c}.status.success{background:#eaf7ef;color:#17643f}.hidden{display:none!important}.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:10px}table{border-collapse:collapse;width:100%;min-width:700px;font-size:.88rem}th,td{padding:11px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}th{background:#edf5f8;color:var(--navy)}tr:last-child td{border-bottom:0}.pill{display:inline-block;border-radius:99px;padding:4px 8px;font-size:.77rem;font-weight:800;white-space:nowrap}.ok{background:#e5f6ec;color:var(--green)}.bad{background:#ffeaec;color:var(--red)}.unknown{background:#fff4d8;color:var(--amber)}.small{font-size:.82rem;color:var(--muted);line-height:1.5}.footer{text-align:center;color:#73838d;font-size:.78rem;padding:22px 8px}.disclaimer{border-left:4px solid #e0ad43;padding:12px 14px;background:#fff9e8;border-radius:7px;font-size:.85rem;line-height:1.5;color:#634e1e}.file-list{margin:10px 0 0;padding-left:20px;font-size:.86rem;color:var(--muted)}
+@media(max-width:720px){body{padding:10px 7px}.hero,.panel{padding:18px}.grid,.grid3,.radio-cards{grid-template-columns:1fr}.actions .btn{width:100%}table{font-size:.8rem}}
+@media print{body{background:white;padding:0}.app{max-width:none}.hero,.panel{box-shadow:none;break-inside:avoid}.actions,.drop,.footer .no-print{display:none!important}}
+</style>
+</head>
+<body>
+<div class="app">
+<header class="hero">
+  <div class="eyebrow">Ferramenta de apoio técnico</div>
+  <h1>Análise de parâmetros da água</h1>
+  <p>Compare resultados de laudos laboratoriais com a tabela de referência cadastrada para água de utilidade, água crítica ou condensado de vapor. Gere um relatório em PDF com resultados, referências e pontos que exigem atenção.</p>
+</header>
+
+<section class="panel">
+  <h2 class="section-title"><span class="badge">1</span> Selecione o tipo de água</h2>
+  <div class="radio-cards">
+    <div class="radio-card"><input type="radio" name="waterType" id="utility" value="utility" checked><label for="utility"><strong>Água de utilidade</strong><span>Inclui limites microbiológicos e físico-químicos definidos na tabela de referência.</span></label></div>
+    <div class="radio-card"><input type="radio" name="waterType" id="critical" value="critical"><label for="critical"><strong>Água crítica</strong><span>Critérios específicos para água crítica no processamento de dispositivos médicos.</span></label></div>
+    <div class="radio-card"><input type="radio" name="waterType" id="steam" value="steam"><label for="steam"><strong>Vapor (condensado)</strong><span>Os parâmetros do vapor referem-se ao monitoramento do condensado.</span></label></div>
+  </div>
+  <p class="hint">A categoria escolhida determina qual coluna de valores será usada na comparação.</p>
+</section>
+
+<section class="panel">
+  <h2 class="section-title"><span class="badge">2</span> Envie o laudo laboratorial</h2>
+  <div class="drop">
+    <strong>Selecione um PDF ou uma imagem do laudo</strong>
+    <p class="small">Formatos aceitos: PDF, PNG, JPG/JPEG, WEBP e BMP. PDFs com texto são extraídos diretamente; documentos digitalizados e imagens passam por OCR quando a biblioteca estiver disponível.</p>
+    <input id="files" type="file" accept=".pdf,.png,.jpg,.jpeg,.webp,.bmp,application/pdf,image/*" multiple>
+    <ul id="fileList" class="file-list"></ul>
+  </div>
+  <div class="grid" style="margin-top:16px">
+    <div class="field"><label for="labName">Laboratório (opcional, para corrigir/complementar)</label><input id="labName" placeholder="Nome do laboratório"></div>
+    <div class="field"><label for="clientName">Cliente / estabelecimento (opcional)</label><input id="clientName" placeholder="Nome do hospital ou cliente"></div>
+    <div class="field"><label for="reportNumber">Número do laudo (opcional)</label><input id="reportNumber" placeholder="Número ou código do laudo"></div>
+    <div class="field"><label for="sampleDate">Data da coleta (opcional)</label><input id="sampleDate" type="date"></div>
+  </div>
+  <div class="actions"><button class="btn btn-primary" id="analyzeBtn">Ler laudo e comparar</button><button class="btn btn-secondary" id="clearBtn" type="button">Limpar</button></div>
+  <div class="progress" id="progress"><div id="progressBar"></div></div>
+  <div id="status" class="status" role="status">Selecione o tipo de água e envie um ou mais arquivos. O processamento é feito no navegador; as bibliotecas de PDF/OCR precisam carregar pela internet.</div>
+</section>
+
+<section class="panel hidden" id="reviewPanel">
+  <h2 class="section-title"><span class="badge">3</span> Revise os dados extraídos</h2>
+  <p class="small">A extração automática pode cometer erros, principalmente em tabelas, vírgulas decimais e unidades. Confira e corrija os campos antes de gerar o relatório.</p>
+  <div class="grid" style="margin:15px 0">
+    <div class="field"><label for="extractedHeader">Texto do cabeçalho / identificação extraída</label><textarea id="extractedHeader" rows="5" placeholder="Texto extraído do laudo"></textarea></div>
+    <div class="field"><label for="normUsed">Norma informada no laudo (se identificada)</label><input id="normUsed" placeholder="Ex.: referência indicada pelo laboratório"><p class="hint">O sistema não presume qual norma o laboratório aplicou se ela não estiver identificada.</p></div>
+  </div>
+  <div class="table-wrap"><table id="resultsTable"><thead><tr><th>Parâmetro reconhecido</th><th>Resultado do laudo</th><th>Unidade</th><th>Resultado normalizado (unidade de referência)</th><th>Condição</th><th>Ação</th></tr></thead><tbody></tbody></table></div>
+  <div class="actions"><button class="btn btn-secondary" id="addRowBtn" type="button">+ Adicionar parâmetro manualmente</button><button class="btn btn-secondary" id="suggestBtn" type="button">Sugestões do especialista</button><button class="btn btn-primary" id="pdfBtn" type="button">Gerar relatório PDF</button></div><div id="suggestionsPanel" class="status hidden" style="margin-top:14px"></div>
+</section>
+
+<section class="panel hidden" id="summaryPanel">
+  <h2 class="section-title"><span class="badge">4</span> Prévia da comparação</h2>
+  <div id="summaryText" class="status"></div>
+  <div class="table-wrap" style="margin-top:14px"><table id="previewTable"><thead><tr><th>Parâmetro</th><th>Resultado</th><th>Critério de referência</th><th>Referência normativa indicada na tabela</th><th>Situação</th></tr></thead><tbody></tbody></table></div>
+  <div class="actions"><button class="btn btn-primary" id="pdfBtn2" type="button">Gerar / atualizar PDF</button></div>
+</section>
+
+<div class="disclaimer" style="margin-top:18px"><strong>Nota técnica:</strong> esta ferramenta compara os valores com a tabela fornecida pelo usuário, identificada como ANSI/AAMI ST108:2023. Ela não substitui a avaliação de profissional habilitado nem confirma, por si só, conformidade legal ou regulatória. A tabela de origem contém referências com anos distintos (2023, 2024, 2025 e 2026); elas são reproduzidas como recebidas e precisam ser verificadas na fonte oficial antes de uso regulatório. O sistema não inventa critérios para parâmetros ausentes ou não avaliáveis.</div>
+<footer class="footer">Análise de parâmetros da água • Processamento local no navegador</footer>
+</div>
+
+<script>
+'use strict';
+if (window.pdfjsLib) pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+const REF = [
+ {name:'pH a 25°C', aliases:['ph','p h'], utility:{kind:'range',min:6.5,max:9.5,display:'6,5–9,5'},critical:{kind:'range',min:5,max:7.5,display:'5,0–7,5'},steam:{kind:'range',min:5,max:9.2,display:'5,0–9,2**'},norm:'ANSI/AAMI ST108:2023',note:'Para geração local de vapor: pH 5,0–7,5. Para vapor tratado em caldeira: pH 7,5–9,2 (nota da tabela).'},
+ {name:'Dureza total (CaCO₃)',aliases:['dureza total','dureza','calcio como caco3','caco3'],utility:{kind:'lt',max:400,display:'<400 mg CaCO₃/L',unit:'mg/L'},critical:{kind:'lt',max:8,display:'<8 mg CaCO₃/L',unit:'mg/L'},steam:{kind:'lt',max:8,display:'<8 mg CaCO₃/L',unit:'mg/L'},norm:'ANSI/AAMI ST108:2024',note:'A tabela informa que, para dureza >150 mg/L, recomenda-se amaciante, exceto se a química de limpeza suportar níveis mais altos.'},
+ {name:'Carga microbiológica',aliases:['carga microbiologica','contagem bacteriana','contagem de bacterias','microbiologia','ufc/ml','ufc / ml'],utility:{kind:'lte',max:500,display:'≤500 UFC/mL',unit:'UFC/mL'},critical:{kind:'lte',max:10,display:'≤10 UFC/mL',unit:'UFC/mL'},steam:{kind:'na',display:'N/A'},norm:'ANSI/AAMI ST108:2025',note:'Nota da tabela: água de utilidade como enxágue final pós-desinfecção: bactérias <10 UFC/mL.'},
+ {name:'Endotoxinas',aliases:['endotoxina','endotoxinas','ue/ml','ue / ml'],utility:{kind:'na',display:'N/A***'},critical:{kind:'lte',max:10,display:'≤10 UE/mL',unit:'UE/mL'},steam:{kind:'na',display:'N/A'},norm:'ANSI/AAMI ST108:2026',note:'Nota da tabela: água de utilidade como enxágue final pós-desinfecção: endotoxina <10 UE/mL.'},
+ {name:'Pseudomonas aeruginosa',aliases:['pseudomonas aeruginosa','pseudomonas'],utility:{kind:'absence',display:'Ausência'},critical:{kind:'absence',display:'Ausência'},steam:{kind:'na',display:'N/A'},norm:'Farmacopeia Brasileira – 6ª edição'},
+ {name:'Carbono Orgânico Total',aliases:['carbono organico total','cot','toc'],utility:{kind:'na',display:'N/A'},critical:{kind:'lte',max:1,display:'≤1 mg/L (ppm)',unit:'mg/L'},steam:{kind:'na',display:'N/A'},norm:'ANSI/AAMI ST108:2023'},
+ {name:'Cor e Turbidez',aliases:['cor e turbidez','turbidez','cor aparente','aspecto'],utility:{kind:'appearance',display:'Incolor, límpida, sem sedimentos'},critical:{kind:'appearance',display:'Incolor, límpida, sem sedimentos'},steam:{kind:'appearance',display:'Incolor, límpida, sem sedimentos'},norm:'ANSI/AAMI ST108:2023'},
+ {name:'Alumínio',aliases:['aluminio','aluminum'],utility:{kind:'lte',max:0.1,display:'≤0,1 mg/L',unit:'mg/L'},critical:{kind:'lte',max:0.1,display:'≤0,1 mg/L',unit:'mg/L'},steam:{kind:'lte',max:0.1,display:'≤0,1 mg/L',unit:'mg/L'},norm:'ANSI/AAMI ST108:2023'},
+ {name:'Cloretos (Cl⁻)',aliases:['cloretos','cloreto','cl-','cloro'],utility:{kind:'lte',max:250,display:'≤250 mg/L',unit:'mg/L'},critical:{kind:'lte',max:1,display:'≤1 mg/L',unit:'mg/L'},steam:{kind:'lte',max:1,display:'≤1 mg/L',unit:'mg/L'},norm:'ANSI/AAMI ST108:2023'},
+ {name:'Condutividade',aliases:['condutividade','conductivity','us/cm','µs/cm','microsiemens'],utility:{kind:'lte',max:500,display:'≤500 µS/cm (25°C)',unit:'µS/cm'},critical:{kind:'lte',max:10,display:'≤10 µS/cm (25°C)',unit:'µS/cm'},steam:{kind:'lte',max:10,display:'≤10 µS/cm (25°C)',unit:'µS/cm'},norm:'NBR ISO 15883-1:2020 / ANSI/AAMI ST108:2023'},
+ {name:'Cobre',aliases:['cobre','copper'],utility:{kind:'lte',max:0.1,display:'≤0,1 mg/L',unit:'mg/L'},critical:{kind:'lte',max:0.1,display:'≤0,1 mg/L',unit:'mg/L'},steam:{kind:'lte',max:0.1,display:'≤0,1 mg/L',unit:'mg/L'},norm:'ANSI/AAMI ST108:2023'},
+ {name:'Ferro',aliases:['ferro','iron'],utility:{kind:'lte',max:0.1,display:'≤0,1 mg/L',unit:'mg/L'},critical:{kind:'lte',max:0.1,display:'≤0,1 mg/L',unit:'mg/L'},steam:{kind:'lte',max:0.1,display:'≤0,1 mg/L',unit:'mg/L'},norm:'ANSI/AAMI ST108:2023'},
+ {name:'Manganês',aliases:['manganes','manganese'],utility:{kind:'lte',max:0.1,display:'≤0,1 mg/L',unit:'mg/L'},critical:{kind:'lte',max:0.1,display:'≤0,1 mg/L',unit:'mg/L'},steam:{kind:'lte',max:0.1,display:'≤0,1 mg/L',unit:'mg/L'},norm:'ANSI/AAMI ST108:2023'},
+ {name:'Nitrato',aliases:['nitrato','nitratos','nitrate'],utility:{kind:'lte',max:10,display:'≤10 mg/L',unit:'mg/L'},critical:{kind:'lte',max:1,display:'≤1 mg/L',unit:'mg/L'},steam:{kind:'lte',max:1,display:'≤1 mg/L',unit:'mg/L'},norm:'ANSI/AAMI ST108:2023'},
+ {name:'Fosfato',aliases:['fosfato','fosfatos','phosphate'],utility:{kind:'lte',max:5,display:'≤5 mg/L',unit:'mg/L'},critical:{kind:'lte',max:1,display:'≤1 mg/L',unit:'mg/L'},steam:{kind:'lte',max:1,display:'≤1 mg/L',unit:'mg/L'},norm:'ANSI/AAMI ST108:2023'},
+ {name:'Sulfato',aliases:['sulfato','sulfatos','sulphate'],utility:{kind:'lte',max:150,display:'≤150 mg/L',unit:'mg/L'},critical:{kind:'lte',max:1,display:'≤1 mg/L',unit:'mg/L'},steam:{kind:'lte',max:1,display:'≤1 mg/L',unit:'mg/L'},norm:'ANSI/AAMI ST108:2023'},
+ {name:'Sílica',aliases:['silica','sílica','silicio'],utility:{kind:'lte',max:50,display:'≤50 mg/L',unit:'mg/L'},critical:{kind:'lte',max:1,display:'≤1 mg/L',unit:'mg/L'},steam:{kind:'lte',max:1,display:'≤1 mg/L',unit:'mg/L'},norm:'ANSI/AAMI ST108:2024'},
+ {name:'Sólidos dissolvidos totais (CaCO₃)',aliases:['solidos dissolvidos totais','tds','solidos totais','residuo total'],utility:{kind:'lte',max:150,display:'≤150 mg/L (como CaCO₃)****',unit:'mg/L'},critical:{kind:'lte',max:1,display:'≤1 mg/L (como CaCO₃)',unit:'mg/L'},steam:{kind:'lte',max:1,display:'≤1 mg/L (como CaCO₃)',unit:'mg/L'},norm:'ANSI/AAMI ST108:2025',note:'A tabela associa a unidade “como CaCO₃” a sólidos dissolvidos totais; confirmar o método e a unidade no laudo.'}
+];
+const TYPE_NAMES={utility:'Água de utilidade',critical:'Água crítica',steam:'Vapor (condensado)'};
+let rows=[],lastExtracted='',sourceFiles=[],suggestions=[],suggestionsSource='';
+const FILE_LIMITS={maxFiles:5,maxSizeMB:20,maxPdfPages:30};
+const $=id=>document.getElementById(id);
+const normText=s=>(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[²³]/g,'').replace(/[–—]/g,'-').replace(/\s+/g,' ').trim();
+function waterType(){return document.querySelector('input[name="waterType"]:checked').value}
+function setStatus(msg,kind=''){const el=$('status');el.textContent=msg;el.className='status'+(kind?' '+kind:'')}
+function setProgress(p){$('progress').style.display='block';$('progressBar').style.width=Math.max(0,Math.min(100,p))+'%'}
+function hideProgress(){setTimeout(()=>$('progress').style.display='none',900)}
+$('files').addEventListener('change',()=>{$('fileList').innerHTML='';sourceFiles=[...$('files').files];sourceFiles.forEach(f=>{const li=document.createElement('li');li.textContent=`${f.name} (${(f.size/1024/1024).toFixed(2)} MB)`;$('fileList').appendChild(li)});});
+function guessParam(line){
+ const s=normText(line);
+ const sorted=[...REF].sort((a,b)=>Math.max(b.name.length,...b.aliases.map(x=>x.length))-Math.max(a.name.length,...a.aliases.map(x=>x.length)));
+ return sorted.find(p=>[p.name,...p.aliases].some(a=>s.includes(normText(a))));
+}
+function parseNumber(s){
+ if(s===null||s===undefined||s==='')return null;
+ let t=String(s).trim().replace(/\s/g,'').replace(/[<>≤≥]/g,'');
+ if(/^-?\d+,\d+$/.test(t))t=t.replace(',','.');
+ else if(/^-?\d{1,3}(\.\d{3})+,\d+$/.test(t))t=t.replace(/\./g,'').replace(',','.');
+ else if((t.match(/\./g)||[]).length>1)t=t.replace(/\./g,'');
+ const m=t.match(/-?\d+(?:\.\d+)?/);return m?Number(m[0]):null;
+}
+function parseMeasurement(raw){
+ const text=String(raw||'').trim();
+ const opMatch=text.match(/^(<=|>=|≤|≥|<|>)/);
+ const operator=opMatch?opMatch[1].replace('≤','<=').replace('≥','>='):'=';
+ return {operator,value:parseNumber(text)};
+}
+function normalizeUnit(unit){return normText(unit).replace(/\s+/g,'').replace('μ','µ');}
+function convertToReference(value,from,to){
+ const a=normalizeUnit(from),b=normalizeUnit(to);
+ if(value===null||!a||!b||a===b)return {value,converted:false,note:''};
+ const conversions={
+  'ug/l|mg/l':v=>v/1000,'µg/l|mg/l':v=>v/1000,'mg/l|ug/l':v=>v*1000,'mg/l|µg/l':v=>v*1000,
+  'ms/cm|µs/cm':v=>v*1000,'ms/cm|us/cm':v=>v*1000,'µs/cm|ms/cm':v=>v/1000,'us/cm|ms/cm':v=>v/1000,
+  'ufc/100ml|ufc/ml':v=>v/100,'mg/l|ppm':v=>v,'ppm|mg/l':v=>v
+ };
+ const fn=conversions[`${a}|${b}`];
+ if(!fn)return {value,converted:false,note:''};
+ return {value:fn(value),converted:true,note:`Convertido automaticamente de ${from} para ${to}. Para mg/L ↔ ppm foi assumida equivalência aproximada em água.`};
+}
+function formatNumber(value){return value===null||value===undefined||!Number.isFinite(value)?'—':new Intl.NumberFormat('pt-BR',{maximumFractionDigits:6}).format(value);}
+function evaluateMeasurement(measurement,c){
+ const {operator,value}=measurement;
+ if(value===null)return 'Revisão necessária';
+ if(operator==='='||operator==='<='){
+  if(c.kind==='lte')return value<=c.max?'Conforme':'Não conforme';
+  if(c.kind==='lt')return value<c.max?'Conforme':'Não conforme';
+  if(c.kind==='range')return value>=c.min&&value<=c.max?'Conforme':'Não conforme';
+  if(c.kind==='gte')return value>=c.min?'Conforme':'Não conforme';
+ }
+ if(operator==='<'){
+  if(c.kind==='lte'||c.kind==='lt')return value<=c.max?'Conforme':'Não conforme';
+  if(c.kind==='range')return value<=c.min?'Não conforme':value<=c.max?'Conforme':'Não conforme';
+  if(c.kind==='gte')return value<=c.min?'Não conforme':'Revisão necessária';
+ }
+ if(operator==='>='||operator==='>'){
+  if(c.kind==='lte'||c.kind==='lt')return value>c.max?'Não conforme':'Revisão necessária';
+  if(c.kind==='range')return value>=c.min&&value<=c.max?'Conforme':value>c.max?'Não conforme':'Revisão necessária';
+  if(c.kind==='gte')return value>=c.min?'Conforme':'Não conforme';
+ }
+ return 'Revisão necessária';
+}function extractValue(line,param){
+ let s=line;
+ if(param){const idx=normText(s).indexOf(normText(param.name));if(idx>=0)s=s.slice(Math.min(s.length,idx+param.name.length));}
+ const m=s.match(/(?:≤|>=|<=|≥|<|>)?\s*-?\d+(?:[.,]\d+)?(?:\s*(?:x\s*10\^?\s*\d+))?/i);
+ return m?m[0].trim():'';
+}
+function extractUnit(line){
+ const s=normText(line);
+ const units=[['µs/cm','µS/cm'],['us/cm','µS/cm'],['ms/cm','mS/cm'],['µg/l','µg/L'],['ug/l','µg/L'],['ufc/100ml','UFC/100mL'],['ufc/ml','UFC/mL'],['ue/ml','UE/mL'],['mg/l','mg/L'],['ppm','ppm'],['ntu','NTU'],['uh/cm','µS/cm']];
+ for(const [a,b] of units)if(s.includes(a))return b;
+ return '';
+}
+function findNorm(text){
+ const m=text.match(/(?:ANSI\s*\/?\s*AAMI\s*)?ST\s*108\s*:\s*20\d{2}|NBR\s*ISO\s*15883-1\s*:\s*2020|Farmacop[eê]ia Brasileira[^,\n;]*/i);
+ return m?m[0].trim():'';
+}
+async function readPDF(file,onProgress){
+ if(!window.pdfjsLib)throw new Error('Biblioteca de leitura de PDF indisponível. Verifique a internet e recarregue a página.');
+ const data=new Uint8Array(await file.arrayBuffer()),pdf=await pdfjsLib.getDocument({data}).promise;let text='';
+ if(pdf.numPages>FILE_LIMITS.maxPdfPages)throw new Error(`O PDF possui ${pdf.numPages} páginas; o limite é ${FILE_LIMITS.maxPdfPages}.`);
+ for(let i=1;i<=pdf.numPages;i++){const page=await pdf.getPage(i),content=await page.getTextContent();text+=content.items.map(x=>x.str).join(' ')+'\n';onProgress(i/pdf.numPages);}
+ if(text.replace(/\s/g,'').length<40){
+   if(!window.Tesseract)throw new Error('O PDF parece digitalizado, mas a biblioteca OCR não está disponível. Verifique a internet.');
+   text='';
+   for(let i=1;i<=pdf.numPages;i++){const page=await pdf.getPage(i),viewport=page.getViewport({scale:1.7}),canvas=document.createElement('canvas');canvas.width=viewport.width;canvas.height=viewport.height;await page.render({canvasContext:canvas.getContext('2d'),viewport}).promise;const result=await Tesseract.recognize(canvas,'por+eng');text+=result.data.text+'\n';onProgress(i/pdf.numPages);}
+ }
+ return text;
+}
+async function readImage(file){if(!window.Tesseract)throw new Error('Biblioteca OCR indisponível. Verifique a internet e recarregue a página.');const r=await Tesseract.recognize(file,'por+eng');return r.data.text;}
+function extractRows(text){
+ const lines=text.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
+ const found=[];
+ for(const line of lines){
+   const p=guessParam(line);if(!p)continue;
+   const raw=extractValue(line,p);const unit=extractUnit(line);
+   if(!raw && !/ausencia|presenca|incolor|limpida|sedimento|nao detectado|não detectado/i.test(line))continue;
+   const existing=found.find(x=>x.param===p.name);
+   if(existing){if(!existing.raw&&raw)Object.assign(existing,{raw,unit,line});continue;}
+   found.push({param:p.name,raw,unit,line,manual:false});
+ }
+ return found;
+}
+function resultKind(row){
+ const p=REF.find(x=>x.name===row.param);if(!p)return {status:'Não avaliado',cls:'unknown',criterion:'Parâmetro sem critério cadastrado',norm:'—',normalized:'—',reason:'Não existe critério para este parâmetro na tabela.'};
+ const c=p[waterType()];
+ if(c.kind==='na')return {status:'Não aplicável (N/A)',cls:'unknown',criterion:c.display,norm:p.norm,normalized:'N/A',reason:'A tabela de referência indica N/A para este tipo de água.'};
+ if(!row.raw)return {status:'Sem resultado legível',cls:'unknown',criterion:c.display,norm:p.norm,normalized:'—',reason:'Confira o laudo e informe o resultado manualmente.'};
+ if(c.kind==='range'||c.kind==='lte'||c.kind==='lt'||c.kind==='gte'){
+  const measurement=parseMeasurement(row.raw);
+  if(measurement.value===null)return {status:'Revisão necessária',cls:'unknown',criterion:c.display,norm:p.norm,normalized:'—',reason:'Não foi possível converter o resultado em valor numérico.'};
+  const unit=normalizeUnit(row.unit),expected=normalizeUnit(c.unit||'');
+  if(expected&&!unit)return {status:'Confirmar unidade',cls:'unknown',criterion:c.display,norm:p.norm,normalized:'—',reason:'A unidade não foi reconhecida. Confirme no laudo antes de concluir.'};
+  const converted=convertToReference(measurement.value,row.unit,c.unit||row.unit);
+  if(expected&&unit!==expected&&!converted.converted)return {status:'Unidade incompatível',cls:'unknown',criterion:c.display,norm:p.norm,normalized:'—',reason:'A unidade não possui conversão automática segura para a unidade de referência.'};
+  const status=evaluateMeasurement({...measurement,value:converted.value},c);
+  const cls=status==='Conforme'?'ok':status==='Não conforme'?'bad':'unknown';
+  const op=measurement.operator==='='?'':measurement.operator;
+  return {status,cls,criterion:c.display,norm:p.norm,normalized:`${op}${formatNumber(converted.value)} ${c.unit||row.unit}`.trim(),reason:`Valor interpretado: ${op}${formatNumber(converted.value)} ${c.unit||row.unit}. ${converted.note}`.trim()};
+ }
+ if(c.kind==='absence'){
+  const s=normText(row.raw+' '+row.line),absent=/ausencia|nao detectado|negativo|não detectado|negativa/.test(s),present=/presenca|detectado|positivo/.test(s);
+  if(absent)return {status:'Conforme',cls:'ok',criterion:c.display,norm:p.norm,normalized:row.raw,reason:'Resultado interpretado como ausência.'};
+  if(present)return {status:'Não conforme',cls:'bad',criterion:c.display,norm:p.norm,normalized:row.raw,reason:'Resultado interpretado como presença/detecção.'};
+  return {status:'Revisão necessária',cls:'unknown',criterion:c.display,norm:p.norm,normalized:row.raw,reason:'Confirme se o resultado indica ausência ou presença.'};
+ }
+ if(c.kind==='appearance'){
+  const s=normText(row.raw+' '+row.line),good=/incolor|limpida|sem sedimentos|sem sedimento|ausencia de turbidez/.test(s),bad=/colorid|turva|sedimento|presenca de particulas/.test(s)&&!good;
+  return {status:good?'Conforme':bad?'Não conforme':'Revisão necessária',cls:good?'ok':bad?'bad':'unknown',criterion:c.display,norm:p.norm,normalized:row.raw||'Descrição visual',reason:'Avaliação visual exige confirmar a descrição completa do laudo.'};
+ }
+ return {status:'Revisão necessária',cls:'unknown',criterion:c.display,norm:p.norm,normalized:'—',reason:'Verificação manual necessária.'};
+}
+function unitCompatible(a,b){
+ const groups=[['mg/l','ppm'],['µs/cm','us/cm','microsiemens/cm'],['ufc/ml'],['ue/ml']];
+ return a===b||groups.some(g=>g.includes(a)&&g.includes(b));
+}
+function renderRows(){
+ const body=$('resultsTable').querySelector('tbody');body.innerHTML='';
+ rows.forEach((r,i)=>{
+   const tr=document.createElement('tr');
+   const p=REF.find(x=>x.name===r.param);
+   const status=resultKind(r);
+   tr.innerHTML=`<td><select data-i="${i}" data-k="param" aria-label="Parâmetro">${['',...REF.map(x=>x.name),'Outro / não listado'].map(n=>`<option value="${escapeHtml(n)}" ${n===r.param?'selected':''}>${escapeHtml(n||'Selecione')}</option>`).join('')}</select></td>
+   <td><input data-i="${i}" data-k="raw" value="${escapeHtml(r.raw||'')}" placeholder="Valor do laudo"></td>
+   <td><input data-i="${i}" data-k="unit" value="${escapeHtml(r.unit||'')}" placeholder="Unidade"></td>
+   <td>${escapeHtml(status.normalized||'—')}</td><td><span class="pill ${status.cls}">${escapeHtml(status.status)}</span><div class="small">${escapeHtml(status.reason)}</div></td>
+   <td><button class="btn btn-danger" type="button" data-remove="${i}">Excluir</button></td>`;
+   body.appendChild(tr);
+ });
+ body.querySelectorAll('[data-i]').forEach(el=>el.addEventListener('change',()=>{const i=+el.dataset.i,k=el.dataset.k;rows[i][k]=el.value;renderRows();renderPreview()}));
+ body.querySelectorAll('[data-remove]').forEach(el=>el.addEventListener('click',()=>{rows.splice(+el.dataset.remove,1);renderRows();renderPreview()}));
+ renderPreview();
+}
+function escapeHtml(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function renderPreview(){
+ const panel=$('summaryPanel');if(!rows.length){panel.classList.add('hidden');return}
+ panel.classList.remove('hidden');const results=rows.map(r=>({r,s:resultKind(r)}));
+ const bad=results.filter(x=>x.s.status==='Não conforme').length,unknown=results.filter(x=>x.s.cls==='unknown').length,ok=results.filter(x=>x.s.status==='Conforme').length;
+ $('summaryText').textContent=`Tipo de água: ${TYPE_NAMES[waterType()]}. Parâmetros identificados: ${rows.length}. Conforme: ${ok}. Não conformes: ${bad}. A revisar / não avaliados: ${unknown}.`;
+ const body=$('previewTable').querySelector('tbody');body.innerHTML='';
+ results.forEach(({r,s})=>{const tr=document.createElement('tr');tr.innerHTML=`<td>${escapeHtml(r.param)}</td><td>${escapeHtml([r.raw,r.unit].filter(Boolean).join(' ' )||'Não identificado')}<div class=\"small\">Normalizado: ${escapeHtml(s.normalized||'—')}</div></td><td>${escapeHtml(s.criterion)}</td><td>${escapeHtml(s.norm)}</td><td><span class="pill ${s.cls}">${escapeHtml(s.status)}</span></td>`;body.appendChild(tr)});
+}
+$('analyzeBtn').addEventListener('click',async()=>{
+ if(!sourceFiles.length){setStatus('Selecione pelo menos um PDF ou uma imagem.', 'error');return}
+ if(sourceFiles.length>FILE_LIMITS.maxFiles){setStatus(`Selecione no máximo ${FILE_LIMITS.maxFiles} arquivos.`, 'error');return}
+ const oversized=sourceFiles.find(f=>f.size>FILE_LIMITS.maxSizeMB*1024*1024);
+ if(oversized){setStatus(`O arquivo ${oversized.name} excede o limite de ${FILE_LIMITS.maxSizeMB} MB.`, 'error');return}
+ rows=[];lastExtracted='';let fullText='';
+ $('analyzeBtn').disabled=true;setProgress(1);setStatus('Lendo arquivos. Aguarde; PDFs digitalizados podem levar alguns minutos.');
+ try{
+  for(let i=0;i<sourceFiles.length;i++){
+   const f=sourceFiles[i];let txt='';
+   if(f.type==='application/pdf'||f.name.toLowerCase().endsWith('.pdf'))txt=await readPDF(f,p=>setProgress((i+p)/sourceFiles.length*85));
+   else if(f.type.startsWith('image/'))txt=await readImage(f);
+   else throw new Error('Formato não suportado: '+f.name);
+   fullText+=`\n--- ARQUIVO: ${f.name} ---\n${txt}\n`;
+  }
+  lastExtracted=fullText;$('extractedHeader').value=fullText.slice(0,8000);
+  const headerNorm=findNorm(fullText);$('normUsed').value=headerNorm;
+  const lab=$('labName');if(!lab.value){const m=fullText.match(/(?:laborat[oó]rio|lab\.)\s*[:\-]?\s*([^\n,;]{3,80})/i);if(m)lab.value=m[1].trim()}
+  const extracted=extractRows(fullText);
+  rows=extracted;
+  $('reviewPanel').classList.remove('hidden');
+  setProgress(100);
+  if(!rows.length)setStatus('O arquivo foi lido, mas nenhum parâmetro da tabela foi reconhecido com confiança. Confira o texto extraído e adicione os parâmetros manualmente.', 'error');
+  else setStatus(`Leitura concluída. ${rows.length} parâmetro(s) sugerido(s). Revise os valores e unidades antes de gerar o PDF.`, 'success');
+  renderRows();hideProgress();
+ }catch(e){setStatus('Não foi possível concluir a leitura: '+e.message,'error');hideProgress()}
+ finally{$('analyzeBtn').disabled=false}
+});
+$('addRowBtn').addEventListener('click',()=>{rows.push({param:'',raw:'',unit:'',line:'',manual:true});renderRows()});
+document.querySelectorAll('input[name="waterType"]').forEach(el=>el.addEventListener('change',()=>{renderRows()}));
+$('clearBtn').addEventListener('click',()=>{rows=[];lastExtracted='';sourceFiles=[];suggestions=[];suggestionsSource='';$('files').value='';$('fileList').innerHTML='';$('labName').value='';$('clientName').value='';$('reportNumber').value='';$('sampleDate').value='';$('normUsed').value='';$('extractedHeader').value='';$('reviewPanel').classList.add('hidden');$('summaryPanel').classList.add('hidden');setStatus('Selecione o tipo de água e envie um ou mais arquivos.');$('progress').style.display='none'});
+$('pdfBtn').addEventListener('click',generatePDF);$('pdfBtn2').addEventListener('click',generatePDF);
+function relevantIssues(){return rows.map(r=>({r,s:resultKind(r),p:REF.find(x=>x.name===r.param)})).filter(x=>x.s.status!=='Conforme');}
+function fallbackSuggestion(item){
+ const n=item.r.param||'parâmetro não identificado',status=item.s.status;
+ const map={
+  'Unidade incompatível':'Confirmar o método analítico e a unidade original no laudo; realizar a conversão somente após validação técnica.',
+  'Confirmar unidade':'Confirmar a unidade, o método e o limite de detecção no laudo antes de comparar.',
+  'Não conforme':'Investigar o ponto de coleta, repetir a análise quando aplicável e avaliar o tratamento da água conforme procedimento validado.',
+  'Sem resultado legível':'Conferir o documento original e inserir manualmente o resultado, a unidade e o operador do ensaio.',
+  'Revisão necessária':'Revisar o resultado original, o método analítico, o limite de detecção e a referência normativa aplicável.',
+  'Não avaliado':'Identificar um critério validado para o parâmetro antes de emitir conclusão.',
+  'Não aplicável (N/A)':'Confirmar se o parâmetro realmente não se aplica ao tipo de água selecionado.'
+ };
+ return {parameter:n,status,summary:map[status]||'Solicitar avaliação de profissional habilitado e conferir a referência oficial.',source:'Orientação preliminar do aplicativo (sem resultado de busca)'};
+}
+function ddgTopic(data){
+ const topic=data?.RelatedTopics?.find(x=>x.Text)||data?.RelatedTopics?.flatMap(x=>x.Topics||[]).find(x=>x.Text);
+ return topic?{summary:topic.Text,source:topic.FirstURL||'DuckDuckGo'}:null;
+}
+async function searchSuggestion(item){
+ const parameter=item.r.param||'parâmetro de água';
+ const query=`como corrigir ${parameter} ${item.s.status} água processamento dispositivos médicos tratamento controle qualidade`;
+ const url='https://api.duckduckgo.com/?'+new URLSearchParams({q:query,format:'json',no_html:'1',skip_disambig:'1'}).toString();
+ try{
+  const response=await fetch(url,{headers:{Accept:'application/json'}});
+  if(!response.ok)throw new Error('HTTP '+response.status);
+  const data=await response.json();
+  const topic=ddgTopic(data);
+  if(topic)return {parameter,status:item.s.status,summary:topic.summary,source:topic.source,query};
+ }catch(e){}
+ return {...fallbackSuggestion(item),query};
+}
+function renderSuggestions(){
+ const panel=$('suggestionsPanel');
+ if(!suggestions.length){panel.classList.add('hidden');return;}
+ panel.classList.remove('hidden');
+ panel.innerHTML='<strong>Sugestões preliminares</strong><p class="small">Estas informações são apoio de pesquisa e não substituem avaliação técnica, norma oficial ou procedimento validado.</p><ol>'+suggestions.map(x=>`<li><strong>${escapeHtml(x.parameter)}</strong> — ${escapeHtml(x.summary)}<br><span class="small">Fonte: ${escapeHtml(x.source)}</span></li>`).join('')+'</ol>';
+}
+async function loadSuggestions(){
+ if(!rows.length){setStatus('Leia um laudo ou adicione parâmetros antes de solicitar sugestões.','error');return;}
+ const issues=relevantIssues();
+ if(!issues.length){suggestions=[{parameter:'Nenhuma inconsistência detectada',status:'Conforme',summary:'Não foram geradas sugestões porque todos os parâmetros foram classificados como conformes.',source:'Regra do aplicativo'}];renderSuggestions();setStatus('Não há itens não conformes ou pendentes para pesquisar.','success');return;}
+ const btn=$('suggestBtn');btn.disabled=true;btn.textContent='Pesquisando sugestões...';setStatus('Consultando referências públicas para os itens que exigem atenção. Aguarde.');
+ suggestions=await Promise.all(issues.map(searchSuggestion));suggestionsSource='DuckDuckGo Instant Answer API + regras de segurança do aplicativo';renderSuggestions();btn.disabled=false;btn.textContent='Atualizar sugestões do especialista';setStatus('Sugestões carregadas. Revise-as antes de gerar o PDF.','success');
+}
+$('suggestBtn').addEventListener('click',loadSuggestions);
+function generatePDF(){
+ if(!window.jspdf?.jsPDF||(typeof window.jspdf.jsPDF.API?.autoTable!=='function'&&typeof window.jspdf.jsPDF.prototype.autoTable!=='function')){setStatus('Biblioteca de PDF/tabelas indisponível. Verifique a internet e recarregue a página.','error');return}
+ if(!rows.length){setStatus('Não há parâmetros para incluir. Leia um laudo ou adicione parâmetros manualmente.','error');return}
+ const {jsPDF}=window.jspdf,doc=new jsPDF({unit:'mm',format:'a4'}),margin=10,pageW=210;
+ const data=rows.map(r=>({r,s:resultKind(r),p:REF.find(x=>x.name===r.param)}));
+ const bad=data.filter(x=>x.s.status==='Não conforme').length,ok=data.filter(x=>x.s.status==='Conforme').length,review=data.filter(x=>x.s.cls==='unknown').length;
+ const tableBase={theme:'grid',styles:{font:'helvetica',fontSize:7,cellPadding:2.2,overflow:'linebreak',valign:'top',textColor:[35,55,70]},headStyles:{fillColor:[18,59,93],textColor:[255,255,255],fontStyle:'bold',fontSize:7},alternateRowStyles:{fillColor:[246,250,252]},margin:{left:margin,right:margin},showHead:'everyPage'};
+ function statusColor(status){return status==='Conforme'?[22,121,75]:status==='Não conforme'?[180,35,50]:[145,96,0];}
+ doc.setFillColor(18,59,93);doc.rect(0,0,pageW,35,'F');doc.setTextColor(255,255,255);doc.setFont('helvetica','bold');doc.setFontSize(15);doc.text('RELATÓRIO DE ANÁLISE DE ÁGUA',margin,15);doc.setFont('helvetica','normal');doc.setFontSize(9);doc.text(TYPE_NAMES[waterType()],margin,23);doc.text('Gerado em '+new Date().toLocaleDateString('pt-BR'),margin,29);
+ doc.setTextColor(35,55,70);doc.setFontSize(8);doc.text('Identificação: '+($('labName').value||'Laboratório não informado')+' | '+($('clientName').value||'Cliente não informado'),margin,42);doc.text('Laudo: '+($('reportNumber').value||'Não informado')+' | Coleta: '+($('sampleDate').value?new Date($('sampleDate').value+'T12:00:00').toLocaleDateString('pt-BR'):'Não informada'),margin,47);
+ let y=55;
+ doc.setFont('helvetica','bold');doc.setFontSize(11);doc.setTextColor(18,59,93);doc.text('1. Resumo executivo',margin,y);y+=5;
+ doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(35,55,70);doc.text(`Parâmetros analisados: ${rows.length}   |   Conforme: ${ok}   |   Não conformes: ${bad}   |   A revisar / sem conclusão: ${review}`,margin,y);y+=8;
+ doc.setFont('helvetica','bold');doc.setFontSize(11);doc.setTextColor(18,59,93);doc.text('2. Dados identificados no laudo',margin,y);y+=3;
+ doc.autoTable({startY:y,...tableBase,head:[['Parâmetro','Resultado original','Unidade','Resultado normalizado','Situação']],body:data.map(({r,s})=>[r.param||'Não identificado',r.raw||'Não identificado',r.unit||'Não identificada',s.normalized||'—',s.status]),didParseCell:({cell,column,section})=>{if(section==='body'&&column.index===4){cell.styles.textColor=statusColor(cell.raw);cell.styles.fontStyle='bold';}}});
+ y=doc.lastAutoTable.finalY+12;
+ doc.setFont('helvetica','bold');doc.setFontSize(11);doc.setTextColor(18,59,93);doc.text('3. Critérios da tabela do aplicativo usados na comparação',margin,y);y+=3;
+ doc.autoTable({startY:y,...tableBase,head:[['Parâmetro','Tipo de água','Critério aplicado','Unidade esperada','Referência normativa']],body:data.map(({r,s,p})=>[r.param||'Não identificado',TYPE_NAMES[waterType()],s.criterion||'Sem critério',p?.[waterType()]?.unit||'—',s.norm||'—'])});
+ y=doc.lastAutoTable.finalY+12;
+ doc.setFont('helvetica','bold');doc.setFontSize(11);doc.setTextColor(18,59,93);doc.text('4. Inconsistências e pontos que exigem atenção',margin,y);y+=3;
+ const issues=data.filter(x=>x.s.status!=='Conforme');
+ const issueBody=issues.length?issues.map(({r,s})=>[r.param||'Não identificado',s.status,[r.raw,r.unit].filter(Boolean).join(' ')||'Não identificado',s.criterion||'—',s.reason||'Revisão necessária']):[['Nenhuma inconsistência identificada','Conforme','—','—','Todos os parâmetros avaliados foram considerados conformes pela regra cadastrada.']];
+ doc.autoTable({startY:y,...tableBase,head:[['Parâmetro','Classificação','Dado do laudo','Critério','Descrição da inconsistência / orientação']],body:issueBody,didParseCell:({cell,column,section})=>{if(section==='body'&&column.index===1){cell.styles.textColor=statusColor(cell.raw);cell.styles.fontStyle='bold';}}});
+ y=doc.lastAutoTable.finalY+12;
+ doc.setFont('helvetica','bold');doc.setFontSize(11);doc.setTextColor(18,59,93);doc.text('5. Sugestões do especialista',margin,y);y+=3;
+ const suggestionBody=suggestions.length?suggestions.map(x=>[x.parameter,x.status,x.summary,x.source]):[['Não solicitadas','—','Nenhuma pesquisa foi realizada antes da geração deste relatório.','—']];
+ doc.autoTable({startY:y,...tableBase,head:[['Parâmetro','Situação','Sugestão preliminar','Fonte']],body:suggestionBody});
+ y=doc.lastAutoTable.finalY+12;
+ doc.setFont('helvetica','bold');doc.setFontSize(11);doc.setTextColor(18,59,93);doc.text('6. Informações adicionais',margin,y);y+=5;
+ doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(35,55,70);
+ const info=[`Norma/referência informada no laudo: ${$('normUsed').value||'Não identificada no texto extraído.'}`,`Arquivo(s) analisado(s): ${sourceFiles.map(f=>f.name).join('; ')||'Não informado'}`,'A tabela de critérios foi reproduzida conforme cadastrada no aplicativo.'];
+ doc.text(doc.splitTextToSize(info.join('\n'),pageW-margin*2),margin,y);y+=18;
+ doc.setFont('helvetica','bold');doc.setFontSize(9);doc.text('Texto extraído do cabeçalho / observações',margin,y);y+=4;doc.setFont('helvetica','normal');doc.setFontSize(7);doc.text(doc.splitTextToSize(($('extractedHeader').value.trim()||'Nenhum texto registrado.').slice(0,4000),pageW-margin*2),margin,y);
+ const disclaimer='As sugestões apresentadas são preliminares, baseadas em pesquisa pública opcional e devem ser verificadas por profissional habilitado. Relatório automatizado de apoio. A extração deve ser conferida com o documento original. Conversões de unidade foram aplicadas somente quando previstas no sistema; mg/L ↔ ppm usa equivalência aproximada em água. Operadores como < e > foram preservados e podem exigir revisão técnica. A comparação reproduz os critérios da tabela fornecida e não substitui avaliação técnica, validação laboratorial ou consulta à norma oficial.';
+ const pages=doc.getNumberOfPages();for(let page=1;page<=pages;page++){doc.setPage(page);doc.setFont('helvetica','normal');doc.setFontSize(6.5);doc.setTextColor(95,110,120);doc.text(doc.splitTextToSize(disclaimer,pageW-margin*2),margin,285);doc.text(`Página ${page} de ${pages}`,pageW-margin,292,{align:'right'});}
+ const filename='Relatorio_Analise_Agua_'+waterType()+'_'+new Date().toISOString().slice(0,10)+'.pdf';doc.save(filename);
+ setStatus('Relatório PDF com tabelas gerado. Confira os dados extraídos e as inconsistências antes de usar.','success');
+}
+</script>
+</body>
+</html>
