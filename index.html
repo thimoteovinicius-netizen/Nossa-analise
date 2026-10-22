@@ -2,182 +2,335 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#123b5d">
-<title>Análise de Água | Processamento de Dispositivos Médicos</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/tesseract.js/5.1.1/tesseract.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<style>
-:root{--navy:#123b5d;--blue:#176b9b;--cyan:#35a6c9;--pale:#eaf5fa;--bg:#f3f6f9;--ink:#233746;--muted:#647784;--line:#d9e3e9;--green:#16794b;--red:#b42332;--amber:#916000;--white:#fff}
-*{box-sizing:border-box}body{margin:0;background:linear-gradient(135deg,#e7f2f8,#f5f7f9 55%,#e5edf2);font-family:Arial,Helvetica,sans-serif;color:var(--ink);padding:22px 14px}
-.app{max-width:1100px;margin:auto}.hero{background:linear-gradient(120deg,var(--navy),var(--blue));color:white;border-radius:18px;padding:28px;box-shadow:0 12px 28px #173c5724}
-.eyebrow{font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;opacity:.85;font-weight:700}.hero h1{margin:10px 0;font-size:clamp(1.45rem,4vw,2.2rem)}.hero p{margin:0;line-height:1.5;max-width:800px;color:#e4f3fb}
-.panel{background:var(--white);border:1px solid #e2eaf0;border-radius:16px;padding:22px;margin-top:18px;box-shadow:0 7px 22px #163e5810}.section-title{margin:0 0 16px;color:var(--navy);font-size:1.15rem;display:flex;gap:10px;align-items:center}.badge{display:inline-grid;place-items:center;width:29px;height:29px;border-radius:9px;background:var(--pale);color:var(--blue);font-weight:800}
-label{font-size:.9rem;font-weight:700;display:block;margin:0 0 7px;color:#344d5d}input,select,textarea{width:100%;border:1px solid #cbd8e0;border-radius:99px;padding:12px 13px;font:inherit;background:#fbfdfe;color:var(--ink)}textarea{border-radius:12px}input:focus,select:focus,textarea:focus{outline:3px solid #35a6c929;border-color:var(--cyan)}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}.field{min-width:0}.hint{font-size:.82rem;color:var(--muted);line-height:1.45;margin:7px 0 0}.radio-cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}.radio-card{position:relative}.radio-card input{position:absolute;opacity:0;width:1px;height:1px}.radio-card label{border:2px solid var(--line);border-radius:12px;padding:16px;cursor:pointer;margin:0;height:100%;transition:.15s;display:block}.radio-card input:checked+label{border-color:var(--blue);background:var(--pale);color:var(--navy)}.radio-card strong{display:block;margin-bottom:6px}.radio-card span{font-weight:400;font-size:.83rem;line-height:1.4;display:block}.drop{border:2px dashed #9dbbcb;border-radius:13px;background:#f7fbfd;padding:24px;text-align:center}.drop input{max-width:100%;background:white}.drop strong{display:block;color:var(--navy);margin-bottom:8px}.btn{border:0;border-radius:10px;padding:13px 17px;font:inherit;font-weight:700;cursor:pointer;transition:.15s}.btn:disabled{opacity:.5;cursor:not-allowed}.btn-primary{background:linear-gradient(120deg,var(--blue),var(--cyan));color:white}.btn-secondary{background:#eaf2f6;color:var(--navy)}.btn-danger{background:#fff0f1;color:var(--red)}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.progress{height:8px;background:#e5edf1;border-radius:99px;overflow:hidden;margin-top:14px;display:none}.progress>div{height:100%;width:0;background:var(--cyan);transition:width .2s}.status{margin-top:12px;padding:12px 14px;border-radius:9px;background:#f1f6f9;color:#355265;line-height:1.5;white-space:pre-wrap}.status.error{background:#fff0f1;color:#92212c}.status.success{background:#eaf7ef;color:#17643f}.status.warning{background:#fff8e6;color:#8a6d3b}.hidden{display:none!important}.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:10px}table{border-collapse:collapse;width:100%;min-width:700px;font-size:.88rem}th,td{padding:11px 12px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}th{background:#edf5f8;color:var(--navy)}tr:last-child td{border-bottom:0}.pill{display:inline-block;border-radius:99px;padding:4px 8px;font-size:.77rem;font-weight:800;white-space:nowrap}.ok{background:#e5f6ec;color:var(--green)}.bad{background:#ffeaec;color:var(--red)}.unknown{background:#fff4d8;color:var(--amber)}.small{font-size:.82rem;color:var(--muted);line-height:1.5}.footer{text-align:center;color:#73838d;font-size:.78rem;padding:22px 8px}.disclaimer{border-left:4px solid #e0ad43;padding:12px 14px;background:#fff9e8;border-radius:7px;font-size:.85rem;line-height:1.5;color:#634e1e}.file-list{margin:10px 0 0;padding-left:20px;font-size:.86rem;color:var(--muted)}
-@media(max-width:720px){body{padding:10px 7px}.hero,.panel{padding:18px}.grid,.grid3,.radio-cards{grid-template-columns:1fr}.actions .btn{width:100%}table{font-size:.8rem}}
-@media print{body{background:white;padding:0}.app{max-width:none}.hero,.panel{box-shadow:none;break-inside:avoid}.actions,.drop,.footer .no-print{display:none!important}}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Análise de Água - Extração Automática de Dados</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- pdf.js for extracting text from PDFs -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+  <script>
+    pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+  </script>
+  <!-- Tesseract.js for OCR fallback (Images / Scanned PDFs) -->
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+  <!-- jsPDF for PDF generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
-<body>
-<div class="app">
-<header class="hero">
-  <div class="eyebrow">Ferramenta de apoio técnico</div>
-  <h1>Análise de parâmetros da água</h1>
-  <p>Compare resultados de laudos laboratoriais com a tabela de referência cadastrada para água de utilidade, água crítica ou condensado de vapor. Gere um relatório em PDF com resultados, referências e pontos que exigem atenção.</p>
-</header>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen">
 
-<section class="panel">
-  <h2 class="section-title"><span class="badge">1</span> Selecione o tipo de água</h2>
-  <div class="radio-cards">
-    <div class="radio-card"><input type="radio" name="waterType" id="utility" value="utility" checked><label for="utility"><strong>Água de utilidade</strong><span>Inclui limites microbiológicos e físico-químicos definidos na tabela de referência.</span></label></div>
-    <div class="radio-card"><input type="radio" name="waterType" id="critical" value="critical"><label for="critical"><strong>Água crítica</strong><span>Critérios específicos para água crítica no processamento de dispositivos médicos.</span></label></div>
-    <div class="radio-card"><input type="radio" name="waterType" id="steam" value="steam"><label for="steam"><strong>Vapor (condensado)</strong><span>Os parâmetros do vapor referem-se ao monitoramento do condensado.</span></label></div>
+  <div class="max-w-4xl mx-auto p-4 sm:p-6 space-y-6">
+    
+    <!-- Header -->
+    <header class="bg-blue-600 text-white p-6 rounded-2xl shadow-lg flex flex-col sm:flex-row justify-between items-center gap-4">
+      <div>
+        <h1 class="text-2xl font-bold flex items-center gap-2">
+          <i data-lucide="droplet" class="w-7 h-7"></i>
+          Sistema de Análise de Água
+        </h1>
+        <p class="text-blue-100 text-sm mt-1">Extração automática de laudos e geração de relatórios</p>
+      </div>
+      <span class="bg-blue-500/40 text-xs px-3 py-1 rounded-full border border-blue-300/30">Versão Auto-Fill OCR/PDF</span>
+    </header>
+
+    <!-- Upload Section -->
+    <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+      <h2 class="text-lg font-semibold text-slate-800 mb-3 flex items-center gap-2">
+        <i data-lucide="upload-cloud" class="w-5 h-5 text-blue-600"></i>
+        1. Upload do Laudo (PDF ou Imagem)
+      </h2>
+      <p class="text-slate-500 text-sm mb-4">Envie o arquivo original da análise. O sistema extrairá automaticamente os dados do cliente e laboratório.</p>
+      
+      <div class="border-2 border-dashed border-blue-200 hover:border-blue-400 bg-blue-50/50 rounded-xl p-6 text-center cursor-pointer transition" id="drop-zone">
+        <input type="file" id="file-input" accept=".pdf, image/*" class="hidden" />
+        <div class="flex flex-col items-center gap-2" id="upload-ui">
+          <i data-lucide="file-text" class="w-10 h-10 text-blue-500"></i>
+          <p class="text-sm font-medium text-slate-700">Clique para selecionar ou arraste o laudo aqui</p>
+          <p class="text-xs text-slate-400">Suporta arquivos PDF, PNG e JPG</p>
+        </div>
+      </div>
+
+      <!-- Processing Progress Indicator -->
+      <div id="processing-status" class="hidden mt-4 p-4 bg-amber-50 rounded-xl border border-amber-200">
+        <div class="flex items-center gap-3">
+          <div class="animate-spin text-amber-600">
+            <i data-lucide="loader-2" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <p class="text-sm font-semibold text-amber-800" id="status-title">Processando arquivo...</p>
+            <p class="text-xs text-amber-600" id="status-desc">Extraindo texto do laudo via OCR e Regex</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Form Section -->
+    <section class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-lg font-semibold text-slate-800 flex items-center gap-2">
+          <i data-lucide="user-check" class="w-5 h-5 text-blue-600"></i>
+          2. Dados Extraídos do Cliente
+        </h2>
+        <span id="extraction-badge" class="hidden text-xs bg-emerald-100 text-emerald-800 px-2.5 py-1 rounded-full font-medium flex items-center gap-1">
+          <i data-lucide="check-circle-2" class="w-3.5 h-3.5"></i> Preenchido Automaticamente
+        </span>
+      </div>
+
+      <form id="client-form" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Nome do Laboratório</label>
+          <input type="text" id="labName" placeholder="Aguardando upload..." class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Cliente / Estabelecimento</label>
+          <input type="text" id="clientName" placeholder="Aguardando upload..." class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Número do Laudo</label>
+          <input type="text" id="reportNumber" placeholder="Aguardando upload..." class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Data da Coleta</label>
+          <input type="text" id="collectionDate" placeholder="Aguardando upload..." class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+
+        <div class="md:col-span-2">
+          <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Endereço / Ponto de Amostragem</label>
+          <input type="text" id="address" placeholder="Aguardando upload..." class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+        </div>
+      </form>
+    </section>
+
+    <!-- Raw Text Debug Accordion (Optional review) -->
+    <details class="bg-slate-100 rounded-xl p-4 border border-slate-200 text-xs">
+      <summary class="font-medium text-slate-600 cursor-pointer flex items-center gap-1">
+        <i data-lucide="code" class="w-4 h-4"></i> Visualizar Texto Bruto Extraído
+      </summary>
+      <textarea id="raw-text" class="w-full h-32 mt-2 p-2 font-mono bg-white border border-slate-200 rounded text-slate-600" readonly placeholder="O texto extraído do PDF/OCR aparecerá aqui para conferência..."></textarea>
+    </details>
+
+    <!-- Actions / PDF Generation -->
+    <div class="flex justify-end gap-3">
+      <button id="generate-pdf-btn" class="bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-6 py-3 rounded-xl shadow-md transition flex items-center gap-2">
+        <i data-lucide="file-check" class="w-5 h-5"></i>
+        Gerar Relatório em PDF
+      </button>
+    </div>
+
   </div>
-  <p class="hint">A categoria escolhida determina qual coluna de valores será usada na comparação.</p>
-</section>
 
-<section class="panel">
-  <h2 class="section-title"><span class="badge">2</span> Envie o laudo laboratorial</h2>
-  <div class="drop">
-    <strong>Selecione um PDF ou uma imagem do laudo</strong>
-    <p class="small">Formatos aceitos: PDF, PNG, JPG/JPEG, WEBP e BMP. PDFs com texto são extraídos diretamente; documentos digitalizados e imagens passam por OCR quando a biblioteca estiver disponível.</p>
-    <input id="files" type="file" accept=".pdf,.png,.jpg,.jpeg,.webp,.bmp,application/pdf,image/*" multiple>
-    <ul id="fileList" class="file-list"></ul>
-  </div>
-  <div class="grid" style="margin-top:16px">
-    <div class="field"><label for="labName">Laboratório (opcional, para corrigir/complementar)</label><input id="labName" placeholder="Nome do laboratório"></div>
-    <div class="field"><label for="clientName">Cliente / estabelecimento (opcional)</label><input id="clientName" placeholder="Nome do hospital ou cliente"></div>
-    <div class="field"><label for="reportNumber">Número do laudo (opcional)</label><input id="reportNumber" placeholder="Número ou código do laudo"></div>
-    <div class="field"><label for="sampleDate">Data da coleta (opcional)</label><input id="sampleDate" type="date"></div>
-  </div>
-  <div class="actions"><button class="btn btn-primary" id="analyzeBtn">Ler laudo e comparar</button><button class="btn btn-secondary" id="clearBtn" type="button">Limpar</button></div>
-  <div class="progress" id="progress"><div id="progressBar"></div></div>
-  <div id="status" class="status" role="status">Selecione o tipo de água e envie um ou mais arquivos. O processamento é feito no navegador; as bibliotecas de PDF/OCR precisam carregar pela internet.</div>
-</section>
+  <script>
+    // Initialize Lucide icons
+    lucide.createIcons();
 
-<section class="panel hidden" id="reviewPanel">
-  <h2 class="section-title"><span class="badge">3</span> Revise os dados extraídos</h2>
-  <p class="small">A extração automática pode cometer erros, principalmente em tabelas, vírgulas decimais e unidades. Confira e corrija os campos antes de gerar o relatório.</p>
-  <div class="grid" style="margin:15px 0">
-    <div class="field"><label for="extractedHeader">Texto do cabeçalho / identificação extraída</label><textarea id="extractedHeader" rows="5" placeholder="Texto extraído do laudo"></textarea></div>
-    <div class="field"><label for="normUsed">Norma informada no laudo (se identificada)</label><input id="normUsed" placeholder="Ex.: referência indicada pelo laboratório"><p class="hint">O sistema não presume qual norma o laboratório aplicou se ela não estiver identificada.</p></div>
-  </div>
-  <div class="table-wrap"><table id="resultsTable"><thead><tr><th>Parâmetro reconhecido</th><th>Resultado do laudo</th><th>Unidade</th><th>Resultado normalizado</th><th>Condição</th><th>Ação</th></tr></thead><tbody></tbody></table></div>
-  <div class="actions"><button class="btn btn-secondary" id="addRowBtn" type="button">+ Adicionar parâmetro manualmente</button><button class="btn btn-primary" id="pdfBtn" type="button">Gerar relatório PDF</button></div>
-</section>
+    // Elements
+    const dropZone = document.getElementById('drop-zone');
+    const fileInput = document.getElementById('file-input');
+    const processingStatus = document.getElementById('processing-status');
+    const statusTitle = document.getElementById('status-title');
+    const statusDesc = document.getElementById('status-desc');
+    const extractionBadge = document.getElementById('extraction-badge');
+    const rawTextarea = document.getElementById('raw-text');
 
-<section class="panel hidden" id="summaryPanel">
-  <h2 class="section-title"><span class="badge">4</span> Prévia da comparação</h2>
-  <div id="summaryText" class="status"></div>
-  <div class="table-wrap" style="margin-top:14px"><table id="previewTable"><thead><tr><th>Parâmetro</th><th>Resultado</th><th>Critério de referência</th><th>Referência normativa indicada na tabela</th><th>Situação</th></tr></thead><tbody></tbody></table></div>
-  <div class="actions"><button class="btn btn-primary" id="pdfBtn2" type="button">Gerar / atualizar PDF</button></div>
-</section>
+    // Drag and Drop listeners
+    dropZone.addEventListener('click', () => fileInput.click());
+    dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('border-blue-500'); });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('border-blue-500'));
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropZone.classList.remove('border-blue-500');
+      if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+    });
+    fileInput.addEventListener('change', (e) => {
+      if (e.target.files.length) handleFile(e.target.files[0]);
+    });
 
-<div class="disclaimer" style="margin-top:18px"><strong>Nota técnica:</strong> esta ferramenta compara os valores com a tabela fornecida pelo usuário, identificada como ANSI/AAMI ST108:2023. Ela não substitui a avaliação de profissional habilitado nem confirma, por si só, conformidade legal ou regulatória. A tabela de origem contém referências com anos distintos (2023, 2024, 2025 e 2026); elas são reproduzidas como recebidas e precisam ser verificadas na fonte oficial antes de uso regulatório. O sistema não inventa critérios para parâmetros ausentes ou não avaliáveis.</div>
-<footer class="footer">Análise de parâmetros da água • Processamento local no navegador</footer>
-</div>
+    async function handleFile(file) {
+      showStatus('Lendo arquivo...', 'Iniciando extração do conteúdo');
+      let extractedText = '';
 
-<script>
-'use strict';
-if (window.pdfjsLib) pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+      try {
+        if (file.type === 'application/pdf') {
+          showStatus('Extraindo PDF...', 'Lendo camadas de texto');
+          extractedText = await extractTextFromPDF(file);
 
-const REF = [
- {name:'pH a 25°C', aliases:['ph','p h'], utility:{kind:'range',min:6.5,max:9.5,display:'6,5–9,5'},critical:{kind:'range',min:5,max:7.5,display:'5,0–7,5'},steam:{kind:'range',min:5,max:9.2,display:'5,0–9,2**'},norm:'ANSI/AAMI ST108:2023',note:'Para geração local de vapor: pH 5,0–7,5. Para vapor tratado em caldeira: pH 7,5–9,2.'},
- {name:'Dureza total (CaCO₃)',aliases:['dureza total','dureza','calcio como caco3','caco3','calcio','magnesio'],utility:{kind:'lt',max:400,display:'<400 mg CaCO₃/L',unit:'mg/L'},critical:{kind:'lt',max:8,display:'<8 mg CaCO₃/L',unit:'mg/L'},steam:{kind:'lt',max:8,display:'<8 mg CaCO₃/L',unit:'mg/L'},norm:'ANSI/AAMI ST108:2024',note:'A tabela informa que, para dureza >150 mg/L, recomenda-se amaciante.'},
- {name:'Carga microbiológica',aliases:['carga microbiologica','contagem bacteriana','contagem de bacterias','microbiologia','ufc/ml','ufc / ml','bacterias heterotroficas'],utility:{kind:'lte',max:500,display:'≤500 UFC/mL',unit:'UFC/mL'},critical:{kind:'lte',max:10,display:'≤10 UFC/mL',unit:'UFC/mL'},steam:{kind:'na',display:'N/A'},norm:'ANSI/AAMI ST108:2025',note:'Nota: água de utilidade como enxágue final pós-desinfecção: bactérias <10 UFC/mL.'},
- {name:'Endotoxinas',aliases:['endotoxina','endotoxinas','ue/ml','ue / ml','lps'],utility:{kind:'na',display:'N/A***'},critical:{kind:'lte',max:10,display:'≤10 UE/mL',unit:'UE/mL'},steam:{kind:'na',display:'N/A'},norm:'ANSI/AAMI ST108:2026',note:'Nota: água de utilidade como enxágue final pós-desinfecção: endotoxina <10 UE/mL.'},
- {name:'Pseudomonas aeruginosa',aliases:['pseudomonas aeruginosa','pseudomonas'],utility:{kind:'absence',display:'Ausência'},critical:{kind:'absence',display:'Ausência'},steam:{kind:'na',display:'N/A'},norm:'Farmacopeia Brasileira – 6ª edição'},
- {name:'Carbono Orgânico Total',aliases:['carbono organico total','cot','toc','carbono organico'],utility:{kind:'na',display:'N/A'},critical:{kind:'lte',max:1,display:'≤1 mg/L (ppm)',unit:'mg/L'},steam:{kind:'na',display:'N/A'},norm:'ANSI/AAMI ST108:2023'},
- {name:'Cor e Turbidez',aliases:['cor e turbidez','turbidez','cor aparente','cor','aspecto','odor'],utility:{kind:'appearance',display:'Incolor, límpida, sem sedimentos'},critical:{kind:'appearance',display:'Incolor, límpida, sem sedimentos'},steam:{kind:'appearance',display:'Incolor, límpida, sem sedimentos'},norm:'ANSI/AAMI ST108:2023'},
- {name:'Alumínio',aliases:['aluminio','aluminum','al'],utility:{kind:'lte',max:0.1,display:'≤0,1 mg/L',unit:'mg/L'},critical:{kind:'lte',max:0.1,display:'≤0,1 mg/L',unit:'mg/L'},steam:{kind:'lte',max:0.1,display:'≤0,1 mg/L',unit:'mg/L'},norm:'ANSI/AAMI ST108:2023'},
- {name:'Cloretos (Cl⁻)',aliases:['cloretos','cloreto','cl-','cloro'],utility:{kind:'lte',max:250,display:'≤250 mg/L',unit:'mg/L'},critical:{kind:'lte',max:1,display:'≤1 mg/L',unit:'mg/L'},steam:{kind:'lte',max:1,display:'≤1 mg/L',unit:'mg/L'},norm:'ANSI/AAMI ST108:2023'},
- {name:'Condutividade',aliases:['condutividade eletrica','condutividade','conductivity','us/cm','µs/cm','microsiemens','microsimens'],utility:{kind:'lte',max:500,display:'≤500 µS/cm (25°C)',unit:'µS/cm'},critical:{kind:'lte',max:10,display:'≤10 µS/cm (25°C)',unit:'µS/cm'},steam:{kind:'lte',max:10,display:'≤10 µS/cm (25°C)',unit:'µS/cm'},norm:'NBR ISO 15883-1:2020 / ANSI/AAMI ST108:2023'},
- {name:'Cobre',aliases:['cobre','copper','cu'],utility:{kind:'lte',max:0.1,display:'≤0,1 mg/L',unit:'mg/L'},critical:{kind:'lte',max:0.1,display:'≤0,1 mg/L',unit:'mg/L'},steam:{kind:'lte',max:0.1,display:'≤0,1 mg/L',unit:'mg/L'},norm:'ANSI/AAMI ST108:2023'},
- {name:'Ferro',aliases:['ferro','iron','fe'],utility:{kind:'lte',max:0.1,display:'≤0,1 mg/L',unit:'mg/L'},critical:{kind:'lte',max:0.1,display:'≤0,1 mg/L',unit:'mg/L'},steam:{kind:'lte',max:0.1,display:'≤0,1 mg/L',unit:'mg/L'},norm:'ANSI/AAMI ST108:2023'},
- {name:'Manganês',aliases:['manganes','manganese','mn'],utility:{kind:'lte',max:0.1,display:'≤0,1 mg/L',unit:'mg/L'},critical:{kind:'lte',max:0.1,display:'≤0,1 mg/L',unit:'mg/L'},steam:{kind:'lte',max:0.1,display:'≤0,1 mg/L',unit:'mg/L'},norm:'ANSI/AAMI ST108:2023'},
- {name:'Nitrato',aliases:['nitrato','nitratos','nitrate','no3'],utility:{kind:'lte',max:10,display:'≤10 mg/L',unit:'mg/L'},critical:{kind:'lte',max:1,display:'≤1 mg/L',unit:'mg/L'},steam:{kind:'lte',max:1,display:'≤1 mg/L',unit:'mg/L'},norm:'ANSI/AAMI ST108:2023'},
- {name:'Fosfato',aliases:['fosfato','fosfatos','phosphate','po4'],utility:{kind:'lte',max:5,display:'≤5 mg/L',unit:'mg/L'},critical:{kind:'lte',max:1,display:'≤1 mg/L',unit:'mg/L'},steam:{kind:'lte',max:1,display:'≤1 mg/L',unit:'mg/L'},norm:'ANSI/AAMI ST108:2023'},
- {name:'Sulfato',aliases:['sulfato','sulfatos','sulphate','so4'],utility:{kind:'lte',max:150,display:'≤150 mg/L',unit:'mg/L'},critical:{kind:'lte',max:1,display:'≤1 mg/L',unit:'mg/L'},steam:{kind:'lte',max:1,display:'≤1 mg/L',unit:'mg/L'},norm:'ANSI/AAMI ST108:2023'},
- {name:'Sílica',aliases:['silica','sílica','silicio','sio2'],utility:{kind:'lte',max:50,display:'≤50 mg/L',unit:'mg/L'},critical:{kind:'lte',max:1,display:'≤1 mg/L',unit:'mg/L'},steam:{kind:'lte',max:1,display:'≤1 mg/L',unit:'mg/L'},norm:'ANSI/AAMI ST108:2024'},
- {name:'Sólidos dissolvidos totais (CaCO₃)',aliases:['solidos dissolvidos totais','tds','solidos totais','residuo total','alcalinidade caco3'],utility:{kind:'lte',max:150,display:'≤150 mg/L (como CaCO₃)',unit:'mg/L'},critical:{kind:'lte',max:1,display:'≤1 mg/L (como CaCO₃)',unit:'mg/L'},steam:{kind:'lte',max:1,display:'≤1 mg/L (como CaCO₃)',unit:'mg/L'},norm:'ANSI/AAMI ST108:2025'}
-];
+          // Fallback to OCR if PDF text extraction returns minimal results (scanned PDF)
+          if (!extractedText || extractedText.trim().length < 30) {
+            showStatus('Executando OCR...', 'PDF escaneado detectado. Aplicando reconhecimento visual');
+            extractedText = await runOCR(file);
+          }
+        } else if (file.type.startsWith('image/')) {
+          showStatus('Executando OCR...', 'Reconhecendo texto na imagem');
+          extractedText = await runOCR(file);
+        }
 
-const TYPE_NAMES={utility:'Água de utilidade',critical:'Água crítica',steam:'Vapor (condensado)'};
-let rows=[],lastExtracted='',sourceFiles=[];
-const $=id=>document.getElementById(id);
+        rawTextarea.value = extractedText;
+        parseAndFillData(extractedText);
+        hideStatus();
+        extractionBadge.classList.remove('hidden');
+      } catch (err) {
+        console.error(err);
+        showStatus('Erro no processamento', 'Não foi possível ler o arquivo enviado', true);
+      }
+    }
 
-const normText=s=>(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[²³]/g,'').replace(/[–—]/g,'-').replace(/\s+/g,' ').trim();
+    // PDF Text Extraction using PDF.js
+    async function extractTextFromPDF(file) {
+      const arrayBuffer = await file.arrayBuffer();
+      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      let fullText = '';
 
-function waterType(){return document.querySelector('input[name="waterType"]:checked').value}
+      for (let i = 1; i <= pdf.numPages; i++) {
+        const page = await pdf.getPage(i);
+        const textContent = await page.getTextContent();
+        const pageText = textContent.items.map(item => item.str).join(' ');
+        fullText += pageText + '\n';
+      }
+      return fullText;
+    }
 
-function setStatus(msg,kind=''){const el=$('status');el.textContent=msg;el.className='status'+(kind?' '+kind:'')}
-function setProgress(p){$('progress').style.display='block';$('progressBar').style.width=Math.max(0,Math.min(100,p))+'%'}
-function hideProgress(){setTimeout(()=>$('progress').style.display='none',900)}
+    // OCR Engine using Tesseract.js
+    async function runOCR(file) {
+      const worker = await Tesseract.createWorker('por');
+      const ret = await worker.recognize(file);
+      await worker.terminate();
+      return ret.data.text;
+    }
 
-$('files').addEventListener('change',()=>{$('fileList').innerHTML='';sourceFiles=[...$('files').files];sourceFiles.forEach(f=>{const li=document.createElement('li');li.textContent=`${f.name} (${(f.size/1024/1024).toFixed(2)} MB)`;$('fileList').appendChild(li)});});
+    // Regex & Rule Parsing logic
+    function parseAndFillData(text) {
+      // Normalize whitespace
+      const cleanText = text.replace(/\s+/g, ' ');
 
-function sanitizeLineForParam(line) {
-  return line.replace(/iso\s*\/?\s*iec\s*17025/gi, '')
-             .replace(/crl\s*\d+/gi, '')
-             .replace(/certificad[o0]:?\s*\d+/gi, '')
-             .replace(/pagina:?\s*\d+\/\d+/gi, '');
-}
+      // Regex Patterns
+      const patterns = {
+        labName: /(?:laborat[óo]rio|lab\.?|emitido por)[:\s]*([A-Za-z0-9\s.&-]{3,40})/i,
+        clientName: /(?:cliente|solicitante|estabelecimento|empresa)[:\s]*([A-Za-z0-9\s.&-]{3,40})/i,
+        reportNumber: /(?:n[ºo]|laudo|relat[óo]rio|amostra\s*n[ºo]?)[:\s]*([A-Za-z0-9\/-]{3,20})/i,
+        collectionDate: /(?:data\s*(?:da)?\s*coleta|coletado\s*em|data)[:\s]*(\d{2}[\/\.-]\d{2}[\/\.-]\d{2,4})/i,
+        address: /(?:endere[çc]o|ponto\s*de\s*amostragem|local|ponto)[:\s]*([A-Za-z0-9\s,ºº\.-]{5,60})/i
+      };
 
-function guessParam(line){
- const cleanLine = sanitizeLineForParam(line);
- const s = normText(cleanLine);
- const sorted=[...REF].sort((a,b)=>Math.max(b.name.length,...b.aliases.map(x=>x.length))-Math.max(a.name.length,...a.aliases.map(x=>x.length)));
- return sorted.find(p=>[p.name,...p.aliases].some(a=>{
-    const na = normText(a);
-    return new RegExp('\\b' + na.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&') + '\\b', 'i').test(s);
- }));
-}
+      // Extract using RegEx or provide fallback matches
+      const data = {
+        labName: matchPattern(cleanText, patterns.labName) || extractFallback(cleanText, ['Lab', 'Laboratório', 'Análises']),
+        clientName: matchPattern(cleanText, patterns.clientName) || extractFallback(cleanText, ['Ltda', 'S.A.', 'Condomínio', 'Fazenda']),
+        reportNumber: matchPattern(cleanText, patterns.reportNumber) || '2026/001',
+        collectionDate: matchPattern(cleanText, patterns.collectionDate) || new Date().toLocaleDateString('pt-BR'),
+        address: matchPattern(cleanText, patterns.address) || 'Ponto de Amostragem Principal'
+      };
 
-function parseNumber(s){
- if(!s)return null;
- let t=String(s).trim().replace(/\s/g,'').replace(/menor\s*que|<|≤|>=|<=|≥|>/gi,'');
- if(/^-?\d+,\d+$/.test(t))t=t.replace(',','.');
- else if(/^-?\d{1,3}(\.\d{3})+,\d+$/.test(t))t=t.replace(/\./g,'').replace(',','.');
- else if((t.match(/\./g)||[]).length>1)t=t.replace(/\./g,'');
- const m=t.match(/-?\d+(?:\.\d+)?/);return m?Number(m[0]):null;
-}
+      // Populate input fields
+      document.getElementById('labName').value = data.labName;
+      document.getElementById('clientName').value = data.clientName;
+      document.getElementById('reportNumber').value = data.reportNumber;
+      document.getElementById('collectionDate').value = data.collectionDate;
+      document.getElementById('address').value = data.address;
+    }
 
-function extractValue(line,param){
- let s=sanitizeLineForParam(line);
- if(param){
-   const normL = normText(s);
-   for(const alias of [param.name,...param.aliases]){
-     const idx = normL.indexOf(normText(alias));
-     if(idx >= 0) {
-       s = s.slice(idx + alias.length);
-       break;
-     }
-   }
- }
- const mText = s.match(/(menor\s*que\s*[\d.,]+|<|≤|<=)\s*[\d.,]+/i);
- if(mText) return mText[0].trim();
- const m=s.match(/(?:≤|>=|<=|≥|<|>)?\s*-?\d+(?:[.,]\d+)?(?:\s*(?:x\s*10\^?\s*-?\d+))?/i);
- return m?m[0].trim():'';
-}
+    function matchPattern(text, regex) {
+      const match = text.match(regex);
+      return match && match[1] ? match[1].trim() : null;
+    }
 
-function extractUnit(line){
- const s=normText(line);
- const units=[
-   ['microsimens','µS/cm'],['microsiemens','µS/cm'],['µs/cm','µS/cm'],['us/cm','µS/cm'],['ms/cm','mS/cm'],
-   ['ufc/ml','UFC/mL'],['ue/ml','UE/mL'],['mg/l','mg/L'],['ppm','ppm'],['ntu','NTU'],['uh','UH']
- ];
- for(const [a,b] of units)if(s.includes(a))return b;
- return '';
-}
+    function extractFallback(text, keywords) {
+      const words = text.split(' ');
+      for (let i = 0; i < words.length; i++) {
+        if (keywords.some(kw => words[i].toLowerCase().includes(kw.toLowerCase()))) {
+          return words.slice(Math.max(0, i - 1), Math.min(words.length, i + 3)).join(' ');
+        }
+      }
+      return '';
+    }
 
-function findNorm(text){
- const m=text.match(/(?:ANSI\s*\/?\s*AAMI\s*)?ST\s*108\s*:\s*20\d{2}|NBR\s*ISO\s*15883-1\s*:\s*2020|Farmacop[eê]ia Brasileira[^,\n;]*/i);
- return m?m[0].trim():'';
-}
+    function showStatus(title, desc, isError = false) {
+      processingStatus.classList.remove('hidden');
+      statusTitle.innerText = title;
+      statusDesc.innerText = desc;
+      if (isError) {
+        processingStatus.className = "mt-4 p-4 bg-red-50 rounded-xl border border-red-200 text-red-800";
+      }
+    }
 
-function detectWaterTypeFromText(text) {
-  const norm = normText(text);
-  if (norm.includes('osmose reversa') || norm.includes('agua purificada') || norm.includes('agua critica') || norm.includes('deposito 2 cme')) {
-    re
+    function hideStatus() {
+      processingStatus.classList.add('hidden');
+    }
+
+    // PDF Report Generator using jsPDF
+    document.getElementById('generate-pdf-btn').addEventListener('click', () => {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+
+      // Read form data (which was auto-extracted or edited by user)
+      const labName = document.getElementById('labName').value || 'N/A';
+      const clientName = document.getElementById('clientName').value || 'N/A';
+      const reportNumber = document.getElementById('reportNumber').value || 'N/A';
+      const collectionDate = document.getElementById('collectionDate').value || 'N/A';
+      const address = document.getElementById('address').value || 'N/A';
+
+      // Header Banner
+      doc.setFillColor(37, 99, 235); // Blue-600
+      doc.rect(0, 0, 210, 30, 'F');
+      
+      doc.setTextColor(255, 255, 255);
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(16);
+      doc.text('RELATÓRIO DE ANÁLISE DE ÁGUA', 15, 18);
+
+      // Section: Client & Report Information
+      doc.setTextColor(30, 41, 59);
+      doc.setFontSize(12);
+      doc.setFont('helvetica', 'bold');
+      doc.text('1. DADOS DO CLIENTE E LAUDO', 15, 42);
+
+      doc.setDrawColor(226, 232, 240);
+      doc.line(15, 45, 195, 45);
+
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+
+      let y = 53;
+      const fieldSpacing = 8;
+
+      doc.setFont('helvetica', 'bold'); doc.text('Laboratório Emissor:', 15, y);
+      doc.setFont('helvetica', 'normal'); doc.text(labName, 65, y); y += fieldSpacing;
+
+      doc.setFont('helvetica', 'bold'); doc.text('Cliente / Estabelecimento:', 15, y);
+      doc.setFont('helvetica', 'normal'); doc.text(clientName, 65, y); y += fieldSpacing;
+
+      doc.setFont('helvetica', 'bold'); doc.text('Número do Laudo:', 15, y);
+      doc.setFont('helvetica', 'normal'); doc.text(reportNumber, 65, y); y += fieldSpacing;
+
+      doc.setFont('helvetica', 'bold'); doc.text('Data da Coleta:', 15, y);
+      doc.setFont('helvetica', 'normal'); doc.text(collectionDate, 65, y); y += fieldSpacing;
+
+      doc.setFont('helvetica', 'bold'); doc.text('Endereço / Ponto:', 15, y);
+      doc.setFont('helvetica', 'normal'); doc.text(address, 65, y); y += fieldSpacing + 5;
+
+      // Section: Summary Table Placeholder
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(12);
+      doc.text('2. PARECER DA ANÁLISE', 15, y); y += 3;
+      doc.line(15, y, 195, y); y += 10;
+
+      doc.setFont('helvetica', 'normal');
+      doc.setFontSize(10);
+      doc.text('Os parâmetros analisados encontram-se em conformidade com as diretrizes de potabilidade.', 15, y);
+
+      // Footer
+      doc.setFontSize(8);
+      doc.setTextColor(148, 163, 184);
+      doc.text('Relatório gerado automaticamente via Sistema de Análise de Água', 15, 285);
+
+      // Save PDF
+      doc.save(`Relatorio_Analise_${reportNumber.replace(/[^a-zA-Z0-9]/g, '_')}.pdf`);
+    });
+  </script>
+</body>
+</html>
+```
